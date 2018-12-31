@@ -32,9 +32,11 @@ namespace ConsoleTest
 
         private static void PrintTurbine(WindTurbineModel turbine)
         {
-            Console.WriteLine(
-                $"Wind Speed: {turbine.WindSpeed:N2} m/s - Low Speed Shaft: {turbine.LowSpeedShaftRpm:N2} " +
-                $"RPM - Power output: {turbine.Power:N2} kW - Is Brake On: {turbine.IsTurbineBrakeOn} - Gen Temp: {turbine.GeneratorTemperatureCelsius:N2} Celsius");
+            //Console.WriteLine(
+            //    $"Wind Speed: {turbine.WindSpeed:N2} m/s - Low Speed Shaft: {turbine.LowSpeedShaftRpm:N2} " +
+            //    $"RPM - Power output: {turbine.Power:N2} kW - Is Brake On: {turbine.IsTurbineBrakeOn} - Gen Temp: {turbine.GeneratorTemperatureCelsius:N2} Celsius");
+            var json = turbine.ToJson();
+            Console.WriteLine(json);
         }
     }
 }

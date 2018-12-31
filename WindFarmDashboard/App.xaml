@@ -1,0 +1,41 @@
+﻿<Application
+    x:Class="WindFarmDashboard.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:WindFarmDashboard">
+
+    <Application.Resources>
+
+        <Color x:Key="LightColor" >#F1EEE9</Color>
+        <Color x:Key="GreenColor" >#01B173</Color>
+        <Color x:Key="GreyColor">#C6C1BB</Color>
+        <Color x:Key="BrownColor">#544741</Color>
+
+        <SolidColorBrush x:Key="LightBrush" Color="{StaticResource LightColor}"></SolidColorBrush>
+        <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource LightColor}"></SolidColorBrush>
+        <SolidColorBrush x:Key="GreenBrush" Color="{StaticResource GreenColor}"></SolidColorBrush>
+        <SolidColorBrush x:Key="GreyBrush" Color="{StaticResource GreyColor}"></SolidColorBrush>
+        <SolidColorBrush x:Key="BrownBrush" Color="{StaticResource BrownColor}"></SolidColorBrush>
+
+        <AcrylicBrush x:Key="ControlBackgroundAcrylicBrush"
+                      BackgroundSource="HostBackdrop"
+                      TintColor="{StaticResource LightColor}"
+                      TintOpacity="0.8"
+                      FallbackColor="{StaticResource LightColor}"/>
+
+        <AcrylicBrush x:Key="GreenBackgroundAcrylicBrush"
+                      BackgroundSource="HostBackdrop"
+                      TintColor="{StaticResource GreenColor}"
+                      TintOpacity="0.8"
+                      FallbackColor="{StaticResource GreenColor}"/>
+
+        <AcrylicBrush x:Key="BrownBackgroundAcrylicBrush"
+                      BackgroundSource="HostBackdrop"
+                      TintColor="{StaticResource BrownColor}"
+                      TintOpacity="0.6"
+                      FallbackColor="{StaticResource BrownColor}"/>
+
+
+    </Application.Resources>
+
+</Application>
