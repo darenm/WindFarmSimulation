@@ -16,7 +16,7 @@ namespace Simulator.Library
         }
 
         public TimeSpan ValueLag { get; set; } = TimeSpan.FromMilliseconds(3000);
-        public int NumberOfSteps { get; set; } = 10;
+        public TimeSpan StepDelay { get; set; } = TimeSpan.FromMilliseconds(100);
 
         public virtual double Value
         {
@@ -34,16 +34,25 @@ namespace Simulator.Library
                 Task.Factory.StartNew(async () =>
                 {
                     var captureToken = _cancellationTokenSource.Token;
-                    var stepDelayTicks = ValueLag.Ticks / NumberOfSteps;
-                    var stepDelay = TimeSpan.FromTicks(stepDelayTicks);
-                    var stepCount = NumberOfSteps;
-                    var valueStep = (_targetValue - _actualValue) / NumberOfSteps;
+                    var stepCount = ValueLag.Ticks / StepDelay.Ticks;
+                    var valueStep = (_targetValue - _actualValue) / stepCount;
+                    if (Math.Abs(valueStep) < 0.01)
+                    {
+                        valueStep = Math.Sign(valueStep)* 0.01;
+                    }
 
                     while (stepCount-- > 0)
                     {
                         if (captureToken.IsCancellationRequested) break;
-                        await Task.Delay(stepDelay, captureToken);
+                        await Task.Delay(StepDelay, captureToken);
                         _actualValue += valueStep;
+
+                        if ((valueStep < 0 && _actualValue < _targetValue) ||
+                            (valueStep > 0 && _actualValue > _targetValue))
+                        {
+                            _actualValue = _targetValue;
+                            break;
+                        }
                     }
 
                     _cancellationTokenSource = null;

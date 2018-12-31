@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Simulator.Library;
 
@@ -8,57 +9,32 @@ namespace ConsoleTest
     {
         private static async Task Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var turbine = new WindTurbineModel();
+            PrintTurbine(turbine);
 
-            var dd = new DelayedDouble(100);
-
-            Console.WriteLine($"Current value: {dd.Value}");
-
-            var count = 100;
-
-            //dd.Value = 200;
-            //while (count-- > 0)
-            //{
-            //    await Task.Delay(TimeSpan.FromMilliseconds(50));
-
-            //    Console.WriteLine(dd.Value);
-
-            //    if (count == 85)
-            //    {
-            //        //dd.Value = 75;
-            //    }
-            //}
-
-            //dd.Value = 50;
-            //count = 100;
-            //while (count-- > 0)
-            //{
-            //    await Task.Delay(TimeSpan.FromMilliseconds(50));
-
-            //    Console.WriteLine(dd.Value);
-
-            //    if (count == 30) dd.Value = 400;
-            //}
-
-            var vd = new VarianceDelayedDouble(100);
-            count = 20;
+            var count = 1000;
             while (count-- > 0)
             {
-                Console.WriteLine(vd.Value);
-
-                if (count == 10) vd.Variance = 2.5;
+                turbine.WindSpeed = 15 + VarianceGenerator.Generate(3);
+                for (int i = 0; i < 100; i++)
+                {
+                    await Task.Delay(500);
+                    PrintTurbine(turbine);
+                }
             }
 
-            vd.Value = 50;
-            count = 100;
-            while (count-- > 0)
+            if (Debugger.IsAttached)
             {
-                await Task.Delay(TimeSpan.FromMilliseconds(50));
-
-                Console.WriteLine(vd.Value);
-
-                if (count == 75) vd.Value = 400;
+                Console.WriteLine("Press enter to exit...");
+                Console.ReadLine();
             }
+        }
+
+        private static void PrintTurbine(WindTurbineModel turbine)
+        {
+            Console.WriteLine(
+                $"Wind Speed: {turbine.WindSpeed:N2} m/s - Low Speed Shaft: {turbine.LowSpeedShaftRpm:N2} " +
+                $"RPM - Power output: {turbine.Power:N2} kW - Is Brake On: {turbine.IsTurbineBrakeOn} - Gen Temp: {turbine.GeneratorTemperatureCelsius:N2} Celsius");
         }
     }
 }
