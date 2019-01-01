@@ -31,11 +31,11 @@ namespace Simulator.Library
 
                 // Don't wait for it
                 _cancellationTokenSource = new CancellationTokenSource();
+                var token = _cancellationTokenSource.Token;
                 Task.Factory.StartNew(async () =>
                 {
                     try
                     {
-                        var captureToken = _cancellationTokenSource.Token;
                         var stepCount = ValueLag.Ticks / StepDelay.Ticks;
                         var valueStep = (_targetValue - _actualValue) / stepCount;
                         if (Math.Abs(valueStep) < 0.01)
@@ -45,7 +45,7 @@ namespace Simulator.Library
 
                         while (stepCount-- > 0)
                         {
-                            if (captureToken.IsCancellationRequested) captureToken.ThrowIfCancellationRequested();
+                            if (token.IsCancellationRequested) token.ThrowIfCancellationRequested();
                             await Task.Delay(StepDelay);
                             _actualValue += valueStep;
 
@@ -65,7 +65,7 @@ namespace Simulator.Library
                     {
                         _cancellationTokenSource = null;
                     }
-                }, _cancellationTokenSource.Token);
+                }, token);
             }
         }
     }

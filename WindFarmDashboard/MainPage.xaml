@@ -34,16 +34,19 @@
 
         <Grid Background="{StaticResource GreenBackgroundAcrylicBrush}"
               Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
-            <TextBlock Text="Contoso Wind Farm Simulator" Style="{StaticResource TitleTextBlockStyle}" Margin="12"
+            <TextBlock Text="Contoso Wind Farm Simulator" Style="{StaticResource HeaderTextBlockStyle}" Margin="12"
                        Foreground="{StaticResource LightBrush}" />
         </Grid>
 
 
         <Grid Grid.Row="1" Background="{StaticResource ControlBackgroundAcrylicBrush}" Margin="12" Padding="12">
             <StackPanel>
-                <TextBlock Text="IoT Hub Status" Style="{StaticResource SubtitleTextBlockStyle}" />
-                <CheckBox IsHitTestVisible="False" Content="DPS Connected" />
-                <CheckBox IsHitTestVisible="False" Content="IoT Hub Connected" />
+                <TextBlock Text="Wind Farm Stats" Style="{StaticResource SubtitleTextBlockStyle}" />
+                <TextBlock Text="{x:Bind ViewModel.NumberOfTurbines, Mode=OneWay, Converter={StaticResource FormatConverter}, ConverterParameter='Number of Turbines: \{0:N0\}'}" 
+                           Margin="12,0,0,0" />
+
+                <TextBlock Text="{x:Bind ViewModel.TotalPower, Mode=OneWay, Converter={StaticResource FormatConverter}, ConverterParameter='Total Power: \{0:N2\} kW'}" 
+                           Margin="12,0,0,0" />
             </StackPanel>
         </Grid>
 
@@ -92,8 +95,10 @@
                             <ColumnDefinition />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="{x:Bind Name, Mode=OneWay }" FontSize="20"
-                                   Grid.ColumnSpan="2" />
+                        <TextBlock Text="{x:Bind Name, Mode=OneWay }" FontSize="20" />
+                        <StackPanel VerticalAlignment="Center" Grid.Column="1">
+                            <TextBlock Text="IoT Hub Connected" Visibility="{x:Bind IoTHubConnected, Mode=OneWay}" Foreground="{StaticResource GreenBrush}"></TextBlock>
+                        </StackPanel>
                         <TextBlock Text="{x:Bind LowSpeedShaftRpm, Mode=OneWay, Converter={StaticResource FormatConverter}, ConverterParameter='\{0:N2\} RPM'}"
                                    Grid.Row="1" Grid.Column="0" FontSize="30"/>
                         <TextBlock Text="{x:Bind Power, Mode=OneWay, Converter={StaticResource FormatConverter}, ConverterParameter='\{0:N2\} kW'}"
@@ -115,17 +120,8 @@
         <Grid Background="{StaticResource GreenBackgroundAcrylicBrush}" Padding="12"
               Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Farm totals: " Style="{StaticResource TitleTextBlockStyle}"
+                <TextBlock Text="Contoso Wind Farm Simulator" Style="{StaticResource SubtitleTextBlockStyle}"
                            Foreground="{StaticResource BackgroundBrush}" />
-
-                <TextBlock Text="{x:Bind ViewModel.NumberOfTurbines, Mode=OneWay, Converter={StaticResource FormatConverter}, ConverterParameter='Number of Turbines: \{0:N0\}'}" 
-                           Style="{StaticResource TitleTextBlockStyle}" Margin="12,0,0,0"
-                           Foreground="{StaticResource BackgroundBrush}" />
-
-                <TextBlock Text="{x:Bind ViewModel.TotalPower, Mode=OneWay, Converter={StaticResource FormatConverter}, ConverterParameter='Total Power: \{0:N2\} kW'}" 
-                           Style="{StaticResource TitleTextBlockStyle}" Margin="12,0,0,0"
-                           Foreground="{StaticResource BackgroundBrush}" />
-
             </StackPanel>
 
         </Grid>

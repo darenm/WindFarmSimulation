@@ -27,6 +27,7 @@ namespace WindFarmDashboard.Models
 
 
         private DeviceClient _deviceClient;
+        private bool _ioTHubConnected;
 
         // Select one of the following transports used by DeviceClient to connect to IoT Hub.
         //private static TransportType _transportType = TransportType.Amqp;
@@ -37,6 +38,17 @@ namespace WindFarmDashboard.Models
         //private static TransportType _transportType = TransportType.Mqtt_WebSocket_Only;
 
         public string DeviceConnectionString { get; set; }
+
+        public bool IoTHubConnected
+        {
+            get => _ioTHubConnected;
+            set
+            {
+                if (value == _ioTHubConnected) return;
+                _ioTHubConnected = value;
+                OnPropertyChanged();
+            }
+        }
 
         public double WindSpeed
         {
@@ -187,12 +199,16 @@ namespace WindFarmDashboard.Models
             try
             {
                 if (string.IsNullOrWhiteSpace(DeviceConnectionString))
+                {
+                    IoTHubConnected = false;
                     return;
+                }
 
                 if (_deviceClient == null)
                 {
                     _deviceClient = DeviceClient.CreateFromConnectionString(DeviceConnectionString, _transportType);
-                    //await _deviceClient.OpenAsync();
+                    IoTHubConnected = true;
+                    await _deviceClient.OpenAsync();
                 }
 
                 var json = JsonConvert.SerializeObject(_dto);
@@ -200,7 +216,7 @@ namespace WindFarmDashboard.Models
                 eventMessage.Properties.Add("generatorTemperatureAlert", (_dto.GeneratorTemperatureCelsius > 60.0) ? "true" : "false");
                 eventMessage.Properties.Add("rotorTemperatureAlert", (_dto.RotorTemperatureCelsius > 35.0) ? "true" : "false");
 
-                _deviceClient.SendEventAsync(eventMessage);
+                await _deviceClient.SendEventAsync(eventMessage);
             }
             catch (Exception e)
             {

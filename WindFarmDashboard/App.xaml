@@ -32,7 +32,7 @@
         <AcrylicBrush x:Key="BrownBackgroundAcrylicBrush"
                       BackgroundSource="HostBackdrop"
                       TintColor="{StaticResource BrownColor}"
-                      TintOpacity="0.6"
+                      TintOpacity="0.8"
                       FallbackColor="{StaticResource BrownColor}"/>
 
 

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Simulator.Library;
 using WindFarmDashboard.Annotations;
@@ -72,6 +73,8 @@ namespace WindFarmDashboard
             {
                 var turbine = new WindTurbine();
                 turbine.Update(windTurbineModel.ToDto());
+                turbine.DeviceConnectionString =
+                    ApplicationData.Current.LocalSettings.Values[$"device-connection-string-{turbine.Name}"]?.ToString();
                 Turbines.Add(turbine);
             }
 
@@ -125,18 +128,28 @@ namespace WindFarmDashboard
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void TickTimerOnTick(object sender, object e)
+        private async void TickTimerOnTick(object sender, object e)
         {
-            UpdateWindData();
+            try
+            {
+                await UpdateWindData();
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+                throw;
+            }
         }
 
         private async Task UpdateWindData()
         {
+            var windspeedChanged = false;
             if (_capturedRandom.NextDouble() > 0.97)
             {
                 // change direction
                 _windDirectionWithVariance.Value = _capturedRandom.NextDouble() * 359;
                 _windSpeedWithVariance.Value = _capturedRandom.NextDouble() * 20;
+                windspeedChanged = true;
             }
 
             var windDirection = _windDirectionWithVariance.Value;
@@ -151,10 +164,12 @@ namespace WindFarmDashboard
             for (var index = 0; index < _turbineModels.Length; index++)
             {
                 var windTurbineModel = _turbineModels[index];
-                windTurbineModel.WindSpeed = windSpeed;
-                var turbine = _turbines[index];
-                turbine.Update(windTurbineModel.ToDto());
-                turbine.SendTelemetry();
+                if (windspeedChanged)
+                {
+                    windTurbineModel.WindSpeed = windSpeed;
+                }
+                _turbines[index].Update(windTurbineModel.ToDto());
+                await _turbines[index].SendTelemetry();
             }
 
             TotalPower = Turbines.Sum(t => t.Power);
