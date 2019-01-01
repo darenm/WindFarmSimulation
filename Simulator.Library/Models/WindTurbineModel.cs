@@ -55,7 +55,7 @@ namespace Simulator.Library
             get => _windSpeed;
             set
             {
-                _windSpeed = value;
+                _windSpeed = value + VarianceGenerator.Generate(3);
                 UpdateWindSpeedDependencies();
             }
         }
@@ -64,10 +64,14 @@ namespace Simulator.Library
         {
             get
             {
-                _lowSpeedShaftRpm.Variance = IsTurbineBrakeOn ? 0 : LowSpeedShaftVariance;
+                _lowSpeedShaftRpm.Variance = IsTurbineBrakeOn || WindSpeed < 5 ? 0 : LowSpeedShaftVariance;
                 return _lowSpeedShaftRpm.Value;
             }
-            private set => _lowSpeedShaftRpm.Value = value;
+            private set
+            {
+                _lowSpeedShaftRpm.Variance = IsTurbineBrakeOn || WindSpeed < 5 ? 0 : LowSpeedShaftVariance;
+                _lowSpeedShaftRpm.Value = value;
+            }
         }
 
         public double HighSpeedShaftRpm => LowSpeedShaftRpm * 105;
@@ -103,7 +107,7 @@ namespace Simulator.Library
         private void UpdateWindSpeedDependencies()
         {
             IsTurbineBrakeOn = WindSpeed > 25;
-            LowSpeedShaftRpm = IsTurbineBrakeOn ? 0 : PowerCurveModel.GetLowSpeedShaftRpm(WindSpeed);
+            LowSpeedShaftRpm = IsTurbineBrakeOn || WindSpeed < 5 ? 0 : PowerCurveModel.GetLowSpeedShaftRpm(WindSpeed);
         }
 
         public string ToJson()

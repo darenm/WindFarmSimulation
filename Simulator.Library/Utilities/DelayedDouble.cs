@@ -45,8 +45,8 @@ namespace Simulator.Library
 
                         while (stepCount-- > 0)
                         {
-                            if (captureToken.IsCancellationRequested) break;
-                            await Task.Delay(StepDelay, captureToken);
+                            if (captureToken.IsCancellationRequested) captureToken.ThrowIfCancellationRequested();
+                            await Task.Delay(StepDelay);
                             _actualValue += valueStep;
 
                             if ((valueStep < 0 && _actualValue < _targetValue) ||
@@ -63,7 +63,6 @@ namespace Simulator.Library
                     }
                     finally
                     {
-                        _actualValue = _targetValue;
                         _cancellationTokenSource = null;
                     }
                 }, _cancellationTokenSource.Token);
