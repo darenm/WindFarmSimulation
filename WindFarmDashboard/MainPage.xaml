@@ -65,6 +65,8 @@
         <GridView ItemsSource="{x:Bind ViewModel.Turbines}"
                   Background="{StaticResource ControlBackgroundAcrylicBrush}"
                   Grid.ColumnSpan="2"
+                  IsItemClickEnabled="True"
+                  ItemClick="TurbineClicked"
                   Grid.Row="2"
                   Padding="12"
                   Margin="12">

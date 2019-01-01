@@ -1,30 +1,40 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
+using Windows.Storage;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
+using WindFarmDashboard.Controls;
+using WindFarmDashboard.Models;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace WindFarmDashboard
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    ///     An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class MainPage : Page
     {
         public MainPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
+        }
+
+        private async void TurbineClicked(object sender, ItemClickEventArgs e)
+        {
+            // if we haven't stored a connection string let's prompt the user
+            if (e.ClickedItem is WindTurbine turbine)
+            {
+                var dlg = new ConnectionStringDialog
+                {
+                    ConnectionString = {Text = turbine.DeviceConnectionString ?? string.Empty}
+                };
+                var result = await dlg.ShowAsync();
+                if (result.ToString() == "Primary")
+                {
+                    turbine.DeviceConnectionString = dlg.ConnectionString.Text;
+                    ApplicationData.Current.LocalSettings.Values[$"device-connection-string-{turbine.Name}"] =
+                        turbine.DeviceConnectionString;
+                }
+            }
         }
     }
 }

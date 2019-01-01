@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Simulator.Library;
 using WindFarmDashboard.Annotations;
@@ -53,13 +54,13 @@ namespace WindFarmDashboard
             _capturedRandom = new Random();
 
             _windDirectionWithVariance = new VarianceDelayedDouble(_capturedRandom.NextDouble() * 359)
-                {StepDelay = TimeSpan.FromMilliseconds(500), ValueLag = TimeSpan.FromSeconds(5), Variance = 3.3};
+            { StepDelay = TimeSpan.FromMilliseconds(500), ValueLag = TimeSpan.FromSeconds(5), Variance = 3.3 };
             _windSpeedWithVariance = new VarianceDelayedDouble(_capturedRandom.NextDouble() * 20)
-                {StepDelay = TimeSpan.FromMilliseconds(500), ValueLag = TimeSpan.FromSeconds(5), Variance = 1};
+            { StepDelay = TimeSpan.FromMilliseconds(500), ValueLag = TimeSpan.FromSeconds(5), Variance = 1 };
 
             InitializeTurbineModels();
 
-            _tickTimer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(1)};
+            _tickTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
             _tickTimer.Tick += TickTimerOnTick;
             _tickTimer.Start();
         }
@@ -73,6 +74,9 @@ namespace WindFarmDashboard
                 turbine.Update(windTurbineModel.ToDto());
                 Turbines.Add(turbine);
             }
+
+            _turbines[0].DeviceConnectionString =
+                "HostName=capstonehub.azure-devices.net;DeviceId=CWF-001;SharedAccessKey=RKfh8J136ZXx3o7D7rJGaU+zT9cxxjkkazodNAnpae4=";
         }
 
         public double WindDirection
@@ -126,7 +130,7 @@ namespace WindFarmDashboard
             UpdateWindData();
         }
 
-        private void UpdateWindData()
+        private async Task UpdateWindData()
         {
             if (_capturedRandom.NextDouble() > 0.97)
             {
@@ -150,6 +154,7 @@ namespace WindFarmDashboard
                 windTurbineModel.WindSpeed = windSpeed;
                 var turbine = _turbines[index];
                 turbine.Update(windTurbineModel.ToDto());
+                turbine.SendTelemetry();
             }
 
             TotalPower = Turbines.Sum(t => t.Power);

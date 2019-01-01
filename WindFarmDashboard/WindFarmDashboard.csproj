@@ -122,6 +122,9 @@
     <Compile Include="Controls\Compass.xaml.cs">
       <DependentUpon>Compass.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ConnectionStringDialog.xaml.cs">
+      <DependentUpon>ConnectionStringDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\FormatConverter.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -156,12 +159,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\ConnectionStringDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.Devices.Client">
+      <Version>1.18.1</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.2</Version>
     </PackageReference>
