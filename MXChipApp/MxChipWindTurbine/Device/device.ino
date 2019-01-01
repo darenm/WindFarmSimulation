@@ -1,5 +1,9 @@
 #include "AZ3166WiFi.h"
 #include "DevKitMQTTClient.h"
+#include "Sensor.h"
+#include "SystemVersion.h"
+#include "http_client.h"
+#include "telemetry.h"
 
 static bool hasWifi = false;
 static bool hasIoTHub = false;
@@ -25,6 +29,17 @@ void setup() {
   }
 }
 
+bool IsButtonClicked(unsigned char ulPin)
+{
+    pinMode(ulPin, INPUT);
+    int buttonState = digitalRead(ulPin);
+    if(buttonState == LOW)
+    {
+        return true;
+    }
+    return false;
+}
+
 void loop() {
   // put your main code here, to run repeatedly:
   if (hasIoTHub && hasWifi)
@@ -42,6 +57,22 @@ void loop() {
     {
       Screen.print(1, "Failure...");
     }
-    delay(2000);
+
+    if(hasIoTHub && IsButtonClicked(USER_BUTTON_A))
+    {
+      Screen.print(2, "Rotor Alert");
+      delay(50);
+    }
+    else if(hasIoTHub && IsButtonClicked(USER_BUTTON_B))
+    {
+      Screen.print(2, "Gen Alert");
+      delay(50);
+    }
+    else
+    {
+      Screen.print(2, "Normal");
+      delay(50);    
+    }
+    delay(1000);
   }
 }
