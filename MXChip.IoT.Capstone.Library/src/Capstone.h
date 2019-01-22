@@ -7,13 +7,13 @@
 class Capstone
 {
     public:
-        Capstone(char* studentId);
+        Capstone(const char* studentId);
         
 
         // assumes input is a zero terminated string
         void GenerateUid(char* input, unsigned int inputLength, char* output, unsigned int outputMaxLength);
     private:
-        char* _studentId;
+        const char* _studentId;
 };
 
 
