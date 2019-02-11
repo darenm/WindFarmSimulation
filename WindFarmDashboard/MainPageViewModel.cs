@@ -49,9 +49,23 @@ namespace WindFarmDashboard
         private ObservableCollection<WindTurbine> _turbines;
         private int _numberOfTurbines;
         private double _totalPower;
+        private DeviceMessage _deviceMessage;
+        private string _studentId;
+        private long _studentIdNumeric;
+        private string _studentIdErrors;
+        private bool _isStudentIdValid;
+        private bool _isTelemetryRunning;
 
         public MainPageViewModel()
         {
+            _deviceMessage = new DeviceMessage
+            {
+                Metadata = new MetadataDto
+                {
+                    DeviceType = "SimulatedTurbine",
+                    StudentId = "AABBCCDD"
+                }
+            };
             _capturedRandom = new Random();
 
             _windDirectionWithVariance = new VarianceDelayedDouble(_capturedRandom.NextDouble() * 359)
@@ -63,6 +77,8 @@ namespace WindFarmDashboard
 
             _tickTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
             _tickTimer.Tick += TickTimerOnTick;
+
+            // Don't start here anymore - start when a valid student ID is entered and start is hit
             _tickTimer.Start();
         }
 
@@ -126,6 +142,75 @@ namespace WindFarmDashboard
             }
         }
 
+        public string StudentId
+        {
+            get => _studentId;
+            set
+            {
+                if (value.Equals(_studentId)) return;
+                _studentId = value;
+                _deviceMessage.Metadata.StudentId = _studentId;
+                StudentIdErrors = string.Empty;
+                if (string.IsNullOrWhiteSpace(_studentId))
+                {
+                    StudentIdErrors = "Student ID cannot be empty";
+                    IsStudentIdValid = false;
+                }
+                else if (_studentId.Length != 8)
+                {
+                    StudentIdErrors = "Student ID must be an 8 character Hex string";
+                    IsStudentIdValid = false;
+                }
+                else 
+                {
+                    try
+                    {
+                        _studentIdNumeric = Convert.ToInt64(_studentId, 16);
+                        IsStudentIdValid = true;
+                    }
+                    catch 
+                    {
+                        StudentIdErrors = "Student ID must be an 8 character Hex string";
+                        IsStudentIdValid = false;
+                    }
+                }
+                OnPropertyChanged();
+            }
+        }
+
+        public string StudentIdErrors
+        {
+            get => _studentIdErrors;
+            set
+            {
+                if (value.Equals(_studentIdErrors)) return;
+                _studentIdErrors = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsStudentIdValid
+        {
+            get => _isStudentIdValid;
+            set
+            {
+                if (value.Equals(_isStudentIdValid)) return;
+                _isStudentIdValid = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsTelemetryRunning
+        {
+            get => _isTelemetryRunning;
+            set
+            {
+                if (value.Equals(_isTelemetryRunning)) return;
+                _isTelemetryRunning = value;
+                OnPropertyChanged();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private async void TickTimerOnTick(object sender, object e)
@@ -174,6 +259,27 @@ namespace WindFarmDashboard
 
             TotalPower = Turbines.Sum(t => t.Power);
             NumberOfTurbines = Turbines.Count();
+        }
+
+        public void StartTelemetry()
+        {
+            if (_isStudentIdValid)
+            {
+                _tickTimer?.Start();
+                IsTelemetryRunning = true;
+
+                // update the turbine windspeeds
+                foreach (var windTurbineModel in _turbineModels)
+                {
+                    windTurbineModel.WindSpeed = _windSpeedWithVariance.Value;
+                }
+            }
+        }
+
+        public void StopTelemetry()
+        {
+            _tickTimer?.Stop();
+            IsTelemetryRunning = false;
         }
 
         [NotifyPropertyChangedInvocator]

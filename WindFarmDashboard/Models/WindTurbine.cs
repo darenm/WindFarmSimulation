@@ -212,7 +212,7 @@ namespace WindFarmDashboard.Models
                 }
 
                 var json = JsonConvert.SerializeObject(_dto);
-                Message eventMessage = new Message(Encoding.UTF8.GetBytes(json));
+                var eventMessage = new Message(Encoding.UTF8.GetBytes(json));
                 eventMessage.Properties.Add("generatorTemperatureAlert", (_dto.GeneratorTemperatureCelsius > 60.0) ? "true" : "false");
                 eventMessage.Properties.Add("rotorTemperatureAlert", (_dto.RotorTemperatureCelsius > 35.0) ? "true" : "false");
 
