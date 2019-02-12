@@ -47,12 +47,23 @@
                          IsReadOnly="{x:Bind ViewModel.IsTelemetryRunning, Mode=OneWay}" Header="Student ID (read-only when telemetry running)"/>
                 <TextBlock Text="{x:Bind ViewModel.StudentIdErrors, Mode=OneWay}" Foreground="Red" Margin="12,4,0,0"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Foreground="Green" Margin="4" IsEnabled="{x:Bind ViewModel.IsStudentIdValid, Mode=OneWay}"
+                    <Button Margin="4" IsEnabled="{x:Bind ViewModel.IsStudentIdValid, Mode=OneWay}"
                             Click="{x:Bind ViewModel.StartTelemetry}"
-                            Visibility="{x:Bind ViewModel.IsTelemetryRunning, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">Start Telemetry</Button>
-                    <Button Foreground="Red" Margin="4"  IsEnabled="{x:Bind ViewModel.IsStudentIdValid, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsTelemetryRunning, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
+                        <StackPanel Orientation="Horizontal">
+                            <SymbolIcon Symbol="Play" Foreground="Green" Margin="0,0,4,0"/>
+                            <TextBlock>Start Telemetry</TextBlock>
+                        </StackPanel>
+                    </Button>
+                    <Button Margin="4"  IsEnabled="{x:Bind ViewModel.IsStudentIdValid, Mode=OneWay}"
                             Click="{x:Bind ViewModel.StopTelemetry}" 
-                            Visibility="{x:Bind ViewModel.IsTelemetryRunning, Mode=OneWay}">Stop Telemetry</Button>
+                            Visibility="{x:Bind ViewModel.IsTelemetryRunning, Mode=OneWay}">
+                        <StackPanel Orientation="Horizontal">
+                            <SymbolIcon Symbol="Stop" Foreground="Red" Margin="0,0,4,0"/>
+                            <TextBlock>Stop Telemetry</TextBlock>
+                        </StackPanel>
+
+                    </Button>
                 </StackPanel>
             </StackPanel>
         </Grid>

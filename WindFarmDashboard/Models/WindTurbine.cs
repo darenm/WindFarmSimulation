@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Devices.Client;
 using Newtonsoft.Json;
 using Simulator.Library.Dtos;
+using Simulator.Library.Utilities;
 using WindFarmDashboard.Annotations;
 
 namespace WindFarmDashboard.Models
@@ -31,7 +32,6 @@ namespace WindFarmDashboard.Models
 
         // Select one of the following transports used by DeviceClient to connect to IoT Hub.
         //private static TransportType _transportType = TransportType.Amqp;
-
         //private static TransportType _transportType = TransportType.Mqtt;
         private static TransportType _transportType = TransportType.Http1;
         //private static TransportType _transportType = TransportType.Amqp_WebSocket_Only;
@@ -194,7 +194,7 @@ namespace WindFarmDashboard.Models
             Name = dto.Name;
         }
 
-        public async Task SendTelemetry()
+        public async Task SendTelemetry(MetadataDto metadataDto)
         {
             try
             {
@@ -204,6 +204,22 @@ namespace WindFarmDashboard.Models
                     return;
                 }
 
+                var deviceMessage = new DeviceMessage
+                {
+                    Metadata = new MetadataDto {DeviceType = metadataDto.DeviceType, StudentId = metadataDto.StudentId}
+                };
+
+                var key = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+                var studentId = Encoding.ASCII.GetBytes(deviceMessage.Metadata.StudentId);
+                for (var i = 0; i < studentId.Length; i++) key[i] = studentId[i];
+
+                var checkSumString = $"{_dto.Name}-{_dto.WindSpeed:N2}-{_dto.Power:N2}";
+                var sipHash = new SipHash(key);
+                var messageBytes = Encoding.ASCII.GetBytes(checkSumString);
+                var result = sipHash.Compute(messageBytes);
+                var resultInHex = $"{result:X}";
+                deviceMessage.Metadata.Uid = resultInHex;
+
                 if (_deviceClient == null)
                 {
                     _deviceClient = DeviceClient.CreateFromConnectionString(DeviceConnectionString, _transportType);
@@ -211,7 +227,9 @@ namespace WindFarmDashboard.Models
                     await _deviceClient.OpenAsync();
                 }
 
-                var json = JsonConvert.SerializeObject(_dto);
+                deviceMessage.Telemetry = _dto;
+
+                var json = JsonConvert.SerializeObject(deviceMessage);
                 var eventMessage = new Message(Encoding.UTF8.GetBytes(json));
                 eventMessage.Properties.Add("generatorTemperatureAlert", (_dto.GeneratorTemperatureCelsius > 60.0) ? "true" : "false");
                 eventMessage.Properties.Add("rotorTemperatureAlert", (_dto.RotorTemperatureCelsius > 35.0) ? "true" : "false");

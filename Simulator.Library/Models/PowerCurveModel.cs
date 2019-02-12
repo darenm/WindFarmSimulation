@@ -4,6 +4,9 @@ namespace Simulator.Library
 {
     public static class PowerCurveModel
     {
+
+        public static bool LowPowerOutput { get; set; }
+
         private static readonly PowerDatum[] KwValues =
         {
             new PowerDatum{Speed = 0, LowSpeedShaftRpm = 0,  Power = 0 },
@@ -49,7 +52,7 @@ namespace Simulator.Library
             var powerIndex = (int) windSpeed;
             if (powerIndex >= KwValues.Length || powerIndex <= 0) return 0; // the brake will be on!
 
-            return KwValues[powerIndex].Power;
+            return KwValues[powerIndex].Power * (LowPowerOutput ? 0.9 : 1.0);
         }
 
         public static double GetLowSpeedShaftRpm(double windSpeed)

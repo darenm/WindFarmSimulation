@@ -22,7 +22,7 @@ namespace Simulator.Library.Dtos
         [JsonProperty(PropertyName = "generatorTemperatureCelsius")]
         public double GeneratorTemperatureCelsius { get; set; }
 
-        [JsonProperty(PropertyName = "triggerRotorOverTemp")]
+        [JsonIgnore]
         public bool TriggerRotorOverTemp { get; set; }
 
         [JsonProperty(PropertyName = "rotorTemperatureCelsius")]

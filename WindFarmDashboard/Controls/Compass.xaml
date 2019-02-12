@@ -22,8 +22,20 @@
               VerticalAlignment="Center"
               RenderTransformOrigin="0.5,0.5" UseLayoutRounding="False" d:LayoutOverrides="Width"
               Grid.Row="0">
+            <Path.Resources>
+                <Storyboard x:Name="AngleStoryboard">
+                    <DoubleAnimation
+                        Storyboard.TargetName="AngleTransform"
+                        Storyboard.TargetProperty="Angle"
+                        To="{x:Bind WindDirection, Mode=OneWay}" Duration="0:0:0.5" >
+                        <DoubleAnimation.EasingFunction>
+                            <PowerEase Power="1.2" EasingMode="EaseInOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </Path.Resources>
             <Path.RenderTransform>
-                <RotateTransform Angle="{x:Bind WindDirection, Mode=OneWay}" />
+                <RotateTransform x:Name="AngleTransform" Angle="0" />
             </Path.RenderTransform>
         </Path>
 

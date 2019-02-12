@@ -40,10 +40,12 @@ namespace Simulator.Library
         private readonly VarianceDelayedDouble _lowSpeedShaftRpm = new VarianceDelayedDouble(0)
             {ValueLag = TimeSpan.FromSeconds(UnBrakedLagSeconds), Variance = LowSpeedShaftVariance};
 
+
+        private readonly VarianceDelayedDouble _windSpeed = new VarianceDelayedDouble(0) {Variance = 1.1};
+
         private bool _isTurbineBrakeOn = true;
 
-
-        private double _windSpeed;
+        public bool LowPowerOutput { get; set; }
 
         public string Name { get; set; }
 
@@ -52,10 +54,10 @@ namespace Simulator.Library
         /// </summary>
         public double WindSpeed
         {
-            get => _windSpeed;
+            get => _windSpeed.Value;
             set
             {
-                _windSpeed = value + VarianceGenerator.Generate(3);
+                _windSpeed.Value = Math.Abs(value + VarianceGenerator.Generate(3));
                 UpdateWindSpeedDependencies();
             }
         }
@@ -64,6 +66,9 @@ namespace Simulator.Library
         {
             get
             {
+                _lowSpeedShaftRpm.Value = IsTurbineBrakeOn || WindSpeed < 5
+                    ? 0
+                    : PowerCurveModel.GetLowSpeedShaftRpm(WindSpeed);
                 _lowSpeedShaftRpm.Variance = IsTurbineBrakeOn || WindSpeed < 5 ? 0 : LowSpeedShaftVariance;
                 return _lowSpeedShaftRpm.Value;
             }
@@ -81,18 +86,21 @@ namespace Simulator.Library
         public double ExternalTemperatureCelsius { get; set; } = 12;
 
         /// <summary>
-        /// Generator operating temp range - 0 - 50, warning 50-60 danger 60+
+        ///     Generator operating temp range - 0 - 50, warning 50-60 danger 60+
         /// </summary>
-        public double GeneratorTemperatureCelsius => ExternalTemperatureCelsius + (Power / 20) + (TriggerGeneratorOverTemp ? 25 : 0) + VarianceGenerator.Generate(1);
+        public double GeneratorTemperatureCelsius => ExternalTemperatureCelsius + Power / 20 +
+                                                     (TriggerGeneratorOverTemp ? 25 : 0) +
+                                                     VarianceGenerator.Generate(1);
 
         public bool TriggerRotorOverTemp { get; set; } = false;
 
         /// <summary>
-        /// Rotor operating temp range - 0 - 30, warning 30-35 danger 35+
+        ///     Rotor operating temp range - 0 - 30, warning 30-35 danger 35+
         /// </summary>
-        public double RotorTemperatureCelsius => ExternalTemperatureCelsius + (Power / 50) + (TriggerRotorOverTemp ? 25 : 0) + VarianceGenerator.Generate(1);
+        public double RotorTemperatureCelsius => ExternalTemperatureCelsius + Power / 50 +
+                                                 (TriggerRotorOverTemp ? 25 : 0) + VarianceGenerator.Generate(1);
 
-        public double Power => LowSpeedShaftRpm * 20.0;
+        public double Power => LowSpeedShaftRpm * 20.0 * (LowPowerOutput ? 0.9 : 1.0);
 
         public bool IsTurbineBrakeOn
         {
