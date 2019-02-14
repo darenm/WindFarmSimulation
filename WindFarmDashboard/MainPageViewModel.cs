@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Simulator.Library;
+using Simulator.Library.Models;
+using Simulator.Library.Utilities;
 using WindFarmDashboard.Annotations;
 using WindFarmDashboard.Models;
 

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Simulator.Library
+﻿namespace Simulator.Library.Models
 {
     public static class PowerCurveModel
     {

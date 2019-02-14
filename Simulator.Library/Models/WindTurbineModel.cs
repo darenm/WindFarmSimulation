@@ -1,8 +1,9 @@
 ﻿using System;
 using Newtonsoft.Json;
 using Simulator.Library.Dtos;
+using Simulator.Library.Utilities;
 
-namespace Simulator.Library
+namespace Simulator.Library.Models
 {
     public class WindTurbineModel
     {

@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Simulator.Library
+namespace Simulator.Library.Utilities
 {
     public class DelayedDouble
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Simulator.Library
+namespace Simulator.Library.Utilities
 {
     public class VarianceDelayedDouble : DelayedDouble
     {
