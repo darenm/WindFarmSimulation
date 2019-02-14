@@ -4,8 +4,6 @@ namespace Simulator.Library.Utilities
 {
     public class VarianceDelayedDouble : DelayedDouble
     {
-        private Random _random = new Random();
-
         public VarianceDelayedDouble(double actualValue) : base(actualValue)
         {
         }
