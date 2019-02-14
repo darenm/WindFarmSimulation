@@ -44,6 +44,7 @@ namespace WindFarmDashboard
         private VarianceDelayedDouble _windDirectionWithVariance;
         private string _windSpeed;
         private VarianceDelayedDouble _windSpeedWithVariance;
+        private int _wornTurbine;
 
         public MainPageViewModel()
         {
@@ -156,6 +157,21 @@ namespace WindFarmDashboard
             }
         }
 
+        public int WornTurbine
+        {
+            get => _wornTurbine;
+            set
+            {
+                if (value.Equals(_wornTurbine))
+                {
+                    return;
+                }
+
+                _wornTurbine = value;
+                OnPropertyChanged();
+            }
+        }
+
         public string StudentIdErrors
         {
             get => _studentIdErrors;
@@ -216,8 +232,8 @@ namespace WindFarmDashboard
                 Turbines.Add(turbine);
             }
 
-            _turbines[0].DeviceConnectionString =
-                "HostName=capstonehub.azure-devices.net;DeviceId=CWF-001;SharedAccessKey=RKfh8J136ZXx3o7D7rJGaU+zT9cxxjkkazodNAnpae4=";
+            //_turbines[0].DeviceConnectionString =
+            //    "HostName=capstonehub.azure-devices.net;DeviceId=CWF-001;SharedAccessKey=RKfh8J136ZXx3o7D7rJGaU+zT9cxxjkkazodNAnpae4=";
         }
 
         private void ProcessStudentId()
@@ -242,6 +258,12 @@ namespace WindFarmDashboard
                     ApplicationData.Current.LocalSettings.Values["StudentId"] = _studentId;
                     _metadataDto.StudentId = _studentId;
                     _capturedRandom = new Random(_studentIdNumeric);
+                    WornTurbine = _capturedRandom.Next(1, 11);
+                    for (var index = 0; index < _turbineModels.Length; index++)
+                    {
+                        _turbineModels[index].LowPowerOutput = index == WornTurbine;
+                    }
+
                     _windDirectionWithVariance = new VarianceDelayedDouble(_capturedRandom.NextDouble() * 359)
                     {
                         StepDelay = TimeSpan.FromMilliseconds(1), ValueLag = TimeSpan.FromMilliseconds(1),

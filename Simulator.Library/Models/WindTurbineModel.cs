@@ -100,7 +100,7 @@ namespace Simulator.Library
         public double RotorTemperatureCelsius => ExternalTemperatureCelsius + Power / 50 +
                                                  (TriggerRotorOverTemp ? 25 : 0) + VarianceGenerator.Generate(1);
 
-        public double Power => LowSpeedShaftRpm * 20.0 * (LowPowerOutput ? 0.9 : 1.0);
+        public double Power => LowSpeedShaftRpm * 20.0 * (LowPowerOutput ? 0.87 : 1.0);
 
         public bool IsTurbineBrakeOn
         {

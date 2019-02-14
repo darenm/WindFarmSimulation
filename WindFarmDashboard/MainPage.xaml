@@ -149,9 +149,17 @@
 
         <Grid Background="{StaticResource GreenBackgroundAcrylicBrush}" Padding="12"
               Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3">
+            <Grid.Resources>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource SubtitleTextBlockStyle}">
+                    <Setter Property="Margin" Value="0,0,24,0"/>
+                    <Setter Property="Foreground" Value="{StaticResource BackgroundBrush}"/>
+                </Style>
+            </Grid.Resources>
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Contoso Wind Farm Simulator" Style="{StaticResource SubtitleTextBlockStyle}"
-                           Foreground="{StaticResource BackgroundBrush}" />
+                <TextBlock Text="Contoso Wind Farm Simulator" />
+                <!-- Only display the following for debugging -->
+                <!--<TextBlock Text="Worn Turbine:" Margin="0,0,4,0" />
+                <TextBlock Text="{x:Bind ViewModel.WornTurbine, Mode=OneWay}" />-->
             </StackPanel>
 
         </Grid>
