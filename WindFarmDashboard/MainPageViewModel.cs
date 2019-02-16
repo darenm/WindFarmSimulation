@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Simulator.Library;
 using Simulator.Library.Models;
 using Simulator.Library.Utilities;
@@ -58,7 +59,7 @@ namespace WindFarmDashboard
 
             InitializeTurbineModels();
 
-            _tickTimer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(2)};
+            _tickTimer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(1)};
             _tickTimer.Tick += TickTimerOnTick;
 
             var tempId = ApplicationData.Current.LocalSettings.Values["StudentId"]?.ToString();
@@ -263,7 +264,7 @@ namespace WindFarmDashboard
                     WornTurbine = _capturedRandom.Next(1, 11);
                     for (var index = 0; index < _turbineModels.Length; index++)
                     {
-                        _turbineModels[index].LowPowerOutput = index == WornTurbine;
+                        _turbineModels[index].LowPowerOutput = index == WornTurbine - 1;
                     }
 
                     _windDirectionWithVariance = new VarianceDelayedDouble(_capturedRandom.NextDouble() * 359)
@@ -271,7 +272,7 @@ namespace WindFarmDashboard
                         StepDelay = TimeSpan.FromMilliseconds(1), ValueLag = TimeSpan.FromMilliseconds(1),
                         Variance = 3.3
                     };
-                    _windSpeedWithVariance = new VarianceDelayedDouble(_capturedRandom.NextDouble() * 20)
+                    _windSpeedWithVariance = new VarianceDelayedDouble(9.2)
                         {StepDelay = TimeSpan.FromMilliseconds(500), ValueLag = TimeSpan.FromSeconds(5), Variance = 1};
                 }
                 catch
@@ -290,8 +291,14 @@ namespace WindFarmDashboard
             }
             catch (Exception exception)
             {
-                Console.WriteLine(exception);
-                throw;
+                StopTelemetry();
+                var cd = new ContentDialog
+                {
+                    CloseButtonText = "Ok",
+                    Title = "Error Sending Telemetry",
+                    Content = $"Stopping Telemetry - Check the device connection strings.{Environment.NewLine}{exception.Message}"
+                };
+                await cd.ShowAsync();
             }
         }
 

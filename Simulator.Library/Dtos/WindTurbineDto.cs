@@ -13,7 +13,7 @@ namespace Simulator.Library.Dtos
         [JsonProperty(PropertyName = "highSpeedShaftRpm")]
         public double HighSpeedShaftRpm { get; set; }
 
-        [JsonProperty(PropertyName = "triggerGeneratorOverTemp")]
+        [JsonIgnore]
         public bool TriggerGeneratorOverTemp { get; set; }
 
         [JsonProperty(PropertyName = "externalTemperatureCelsius")]
