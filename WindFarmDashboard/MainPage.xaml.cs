@@ -25,6 +25,7 @@ namespace WindFarmDashboard
             {
                 var dlg = new ConnectionStringDialog
                 {
+                    Title = $"Enter IoTHub Device Connection String for {turbine.Name}",
                     ConnectionString = {Text = turbine.DeviceConnectionString ?? string.Empty}
                 };
                 var result = await dlg.ShowAsync();
