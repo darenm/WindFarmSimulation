@@ -109,7 +109,10 @@ namespace WindFarmDashboard
             CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
             ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
             titleBar.ButtonBackgroundColor = Colors.Transparent;
+            titleBar.ButtonForegroundColor = Colors.White;
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            titleBar.ButtonInactiveForegroundColor = Colors.White;
+
         }
     }
 }

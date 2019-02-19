@@ -89,8 +89,8 @@ namespace Simulator.Library.Models
         /// <summary>
         ///     Generator operating temp range - 0 - 50, warning 50-60 danger 60+
         /// </summary>
-        public double GeneratorTemperatureCelsius => ExternalTemperatureCelsius + Power / 20 +
-                                                     (TriggerGeneratorOverTemp ? 25 : 0) +
+        public double GeneratorTemperatureCelsius => ExternalTemperatureCelsius + Power / 20 *
+                                                     (LowPowerOutput ? 2.2 : 1) +
                                                      VarianceGenerator.Generate(1);
 
         public bool TriggerRotorOverTemp { get; set; } = false;
